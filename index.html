@@ -4,11 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Около 20 вопросов, чтобы понять, кого вы ищете на самом деле: PR-менеджера, маркетолога, SMM, бренд-менеджера, контентщика или совмещение ролей. С черновиком вакансии.">
-<meta property="og:title" content="Кого вы ищете на самом деле?">
-<meta property="og:description" content="Пять минут: узнайте, кто вам нужен, как назвать вакансию и что с этого человека спрашивать.">
+<link rel="canonical" href="https://whotohire.losich.com/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://whotohire.losich.com/">
-<link rel="canonical" href="https://whotohire.losich.com/">
+<meta property="og:site_name" content="whotohire.losich.com">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="Кого вы ищете на самом деле?">
+<meta property="og:description" content="Тест для тех, кто нанимает. Пять минут: узнайте, кто вам нужен, как назвать вакансию и что с этого человека спрашивать.">
+<meta property="og:image" content="https://whotohire.losich.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Кого вы ищете на самом деле? Тест для тех, кто нанимает">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://whotohire.losich.com/og.png">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}body{margin:0}[hidden]{display:none!important}img{max-width:100%}
 @font-face{font-family:'Unbounded';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/unbounded-cyrillic-600-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
@@ -77,12 +85,26 @@ h1 mark { background: var(--accent); color: var(--accent-ink); padding: 0 .12em;
 .top-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
 .meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .meta li { font-size: 14px; color: var(--muted); padding: 6px 12px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); }
-.tone { display: inline-flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--line); }
+.tone-pick { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 20px; background: var(--surface); border: 1.5px solid var(--line); }
+.tone-label { margin: 0; font-size: 12.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.tone { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .tone button {
-  font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 38px;
-  padding: 6px 16px; border-radius: 999px; border: 0; background: transparent; color: var(--muted);
+  font: inherit; cursor: pointer; text-align: left; min-height: 64px;
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  border-radius: 14px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink);
+  transition: background .15s, border-color .15s, color .15s;
 }
-.tone button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+.tone button:hover { border-color: var(--ink); }
+.tone button svg { flex: none; width: 26px; height: 26px; }
+.tone button span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tone button b { font-family: var(--font-display); font-weight: 600; font-size: 16px; line-height: 1.2; }
+.tone button small { font-size: 13.5px; color: var(--muted); line-height: 1.25; }
+#tone-serious[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+#tone-serious[aria-pressed="true"] small { color: color-mix(in srgb, var(--surface) 72%, transparent); }
+#tone-sarc[aria-pressed="true"] { background: var(--accent); border-color: var(--accent-ink); color: var(--accent-ink); }
+#tone-sarc[aria-pressed="true"] small { color: color-mix(in srgb, var(--accent-ink) 72%, transparent); }
+.tone-note { margin: 0; font-size: 13.5px; color: var(--muted); }
+@media (max-width: 420px) { .tone button { flex-direction: column; align-items: flex-start; gap: 6px; } }
 
 /* Panels */
 #app { display: flex; flex-direction: column; gap: 16px; }
@@ -255,13 +277,15 @@ footer a { color: var(--ink); }
     <span class="kicker">Тест для тех, кто нанимает</span>
     <h1>Кого вы ищете <mark>на самом деле</mark>?</h1>
     <p class="lede" id="lede"></p>
-    <div class="top-row">
-      <ul class="meta" aria-label="О тесте"><li>≈ 20 вопросов</li><li>5 минут</li><li>10 ролей и их сочетания</li><li>Без регистрации</li></ul>
-      <div class="tone" role="group" aria-label="Тон теста">
-        <button type="button" id="tone-sarc" aria-pressed="true">С сарказмом (по-взрослому)</button>
-        <button type="button" id="tone-serious" aria-pressed="false">Серьезно (по-деловому)</button>
+    <ul class="meta" aria-label="О тесте"><li>≈ 20 вопросов</li><li>5 минут</li><li>10 ролей и их сочетания</li><li>Без регистрации</li></ul>
+    <section class="tone-pick" aria-labelledby="tone-label">
+      <p class="tone-label" id="tone-label">Выберите тон теста</p>
+      <div class="tone" role="group" aria-labelledby="tone-label">
+        <button type="button" id="tone-serious" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M3 13h18"></path></svg><span><b>Серьезно</b><small>по-деловому</small></span></button>
+        <button type="button" id="tone-sarc" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 15c2.5 1.5 5.5 1.5 8-1"></path><path d="M8.5 9.5h1.5"></path><path d="M14 9l2 1"></path></svg><span><b>С сарказмом</b><small>по-взрослому</small></span></button>
       </div>
-    </div>
+      <p class="tone-note">Вопросы и результат одинаковые, меняется только подача. Переключить можно в любой момент.</p>
+    </section>
   </header>
 
   <main id="app" aria-live="polite"></main>
@@ -707,15 +731,15 @@ footer a { color: var(--ink); }
   ];
 
   var KEYS = Object.keys(ROLES);
-  var STORE = 'kogo-nanyat-v4', TONE_STORE = 'kogo-nanyat-tone';
+  var STORE = 'kogo-nanyat-v4', TONE_STORE = 'kogo-nanyat-tone-v2';
   function fresh() { return { step: 0, answers: new Array(Q.length).fill(null) }; }
   var state = fresh();
   try {
     var saved = JSON.parse(localStorage.getItem(STORE) || 'null');
     if (saved && Array.isArray(saved.answers) && saved.answers.length === Q.length) state = saved;
   } catch (e) {}
-  var tone = 'sarc';
-  try { tone = localStorage.getItem(TONE_STORE) || 'sarc'; } catch (e) {}
+  var tone = 'serious';
+  try { tone = localStorage.getItem(TONE_STORE) || 'serious'; } catch (e) {}
   function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
 
   var sharedRole = null;

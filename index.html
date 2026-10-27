@@ -1325,6 +1325,8 @@ footer a { color: var(--ink); }
         { pill: 'Можно править здесь', sub: sarc() ? 'Собран из ваших ответов. Заполните поля в квадратных скобках и, пожалуйста, пишите про «молодую динамично развивающуюся компанию» и «дружный коллектив профессионалов и единомышленников».' : 'Собран из ваших ответов. Заполните поля в квадратных скобках и поправьте текст под себя.' });
     }
 
+    var authorKey = v.kind === 'nobody' ? null : (v.a === 'pr' || (v.kind === 'hybrid' && v.b === 'pr')) ? 'pr' : v.a;
+    html += authorHtml(authorKey);
     var shareUrl = PUBLIC_URL + '#' + vkey;
     html += panel('Поделиться результатом',
       '<div class="row"><input class="share-link" id="share-link" type="text" readonly value="' + esc(shareUrl) + '" aria-label="Ссылка на результат">' +
@@ -1341,8 +1343,6 @@ footer a { color: var(--ink); }
       '<span class="status" id="copy-status" role="status"></span>' +
       '<div id="copy-fallback-wrap" hidden><textarea class="copy-fallback" id="copy-fallback" readonly aria-label="Текст результата"></textarea></div>');
 
-    var authorKey = v.kind === 'nobody' ? null : (v.a === 'pr' || (v.kind === 'hybrid' && v.b === 'pr')) ? 'pr' : v.a;
-    html += authorHtml(authorKey);
 
     app.innerHTML = html;
 

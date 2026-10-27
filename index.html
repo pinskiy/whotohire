@@ -107,10 +107,10 @@ h1 mark { background: var(--accent); color: var(--accent-ink); padding: 0 .12em;
 @media (max-width: 420px) { .tone button { flex-direction: column; align-items: flex-start; gap: 6px; } }
 
 /* Panels */
-#app { display: flex; flex-direction: column; gap: 16px; }
+#app { display: flex; flex-direction: column; gap: 12px; }
 .panel {
   background: var(--surface); border: 1.5px solid var(--line); border-radius: 22px;
-  padding: clamp(20px, 4vw, 32px); display: flex; flex-direction: column; gap: 18px; min-width: 0;
+  padding: clamp(18px, 3.4vw, 26px); display: flex; flex-direction: column; gap: 14px; min-width: 0;
 }
 .panel.focus { border: 2px solid var(--ink); }
 .panel.slim { padding-block: 16px; gap: 12px; }
@@ -162,6 +162,7 @@ h1 mark { background: var(--accent); color: var(--accent-ink); padding: 0 .12em;
 .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
 .actions .btn { width: 100%; }
+#copy-status:empty, #card-holder:empty { display: none; }
 .status { font-size: 14px; color: var(--muted); min-height: 1.2em; }
 
 /* Hero verdict */
@@ -239,9 +240,9 @@ h1 mark { background: var(--accent); color: var(--accent-ink); padding: 0 .12em;
 }
 .share-img { display: block; width: 100%; max-width: 360px; height: auto; border-radius: 16px; border: 1.5px solid var(--line); }
 
-.author { flex-direction: row; align-items: center; gap: 24px; background: var(--accent); color: var(--accent-ink); border: 2px solid var(--accent-ink); }
+.author { flex-direction: row; align-items: center; gap: 20px; padding-block: 20px; background: var(--accent); color: var(--accent-ink); border: 2px solid var(--accent-ink); }
 .avatar {
-  flex: none; width: 120px; height: 120px; border-radius: 50%; overflow: hidden;
+  flex: none; width: 96px; height: 96px; border-radius: 50%; overflow: hidden;
   display: grid; place-items: center; background: var(--surface); color: var(--accent-ink);
   border: 3px solid var(--accent-ink); box-shadow: 6px 6px 0 var(--accent-ink);
   font-family: var(--font-display); font-weight: 800; font-size: 36px;
@@ -254,7 +255,7 @@ h1 mark { background: var(--accent); color: var(--accent-ink); padding: 0 .12em;
 .author-intro { margin: 6px 0 0; font-size: 16.5px; line-height: 1.5; max-width: 54ch; color: var(--accent-ink); }
 .author .btn { align-self: flex-start; margin-top: 10px; background: var(--accent-ink); color: #FFFFFF; border-color: var(--accent-ink); }
 .author .btn:focus-visible { outline-color: var(--accent-ink); }
-@media (max-width: 480px) { .author { flex-direction: column; align-items: flex-start; } .avatar { width: 104px; height: 104px; } }
+@media (max-width: 480px) { .author { flex-direction: column; align-items: flex-start; } .avatar { width: 88px; height: 88px; } }
 
 .copy-fallback { width: 100%; min-height: 160px; font: inherit; font-size: 14px; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--chip); color: var(--ink); }
 footer { font-size: 14px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; padding-top: 20px; border-top: 1.5px solid var(--line); }
@@ -268,6 +269,17 @@ footer { font-size: 14px; color: var(--muted); display: flex; flex-direction: co
 .legal-date { color: var(--muted); font-size: 14px !important; }
 .legal-lead { padding: 14px 16px; border-radius: 14px; background: var(--chip); }
 .legal-back { align-self: flex-start; font-size: 15px; font-weight: 600; text-decoration: none; padding: 8px 0; }
+.fold { gap: 0; }
+.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 8px; }
+.fold-head { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.fold-hint { font-size: 14px; color: var(--muted); }
+.fold .chev { flex: none; width: 28px; height: 28px; padding: 4px; border-radius: 50%; background: var(--chip); transition: transform .2s; }
+.fold[open] .chev { transform: rotate(180deg); }
+.fold-body { display: flex; flex-direction: column; gap: 14px; padding-top: 16px; }
+.fold-label { margin-top: 4px; }
+.vac-text { min-height: 340px; }
 .foot-links { display: flex; flex-wrap: wrap; gap: 6px 16px; }
 footer a { color: var(--ink); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -1235,6 +1247,13 @@ footer a { color: var(--ink); }
       (title ? '<div class="panel-head"><h3 class="panel-title">' + esc(title) + '</h3>' + (opts.pill ? '<span class="pill">' + esc(opts.pill) + '</span>' : '') + '</div>' : '') +
       (opts.sub ? '<p class="panel-sub">' + esc(opts.sub) + '</p>' : '') + inner + '</section>';
   }
+  function fold(title, inner, opts) {
+    opts = opts || {};
+    return '<details class="panel fold"' + (opts.open ? ' open' : '') + '><summary><span class="fold-head"><span class="panel-title">' + esc(title) + '</span>' +
+      (opts.hint ? '<span class="fold-hint">' + esc(opts.hint) + '</span>' : '') + '</span>' +
+      '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></summary>' +
+      '<div class="fold-body">' + (opts.sub ? '<p class="panel-sub">' + esc(opts.sub) + '</p>' : '') + inner + '</div></details>';
+  }
   function whyList(items) {
     return '<ul class="why">' + items.map(function (c) { return '<li><span>' + esc(Q[c.i].q) + '</span><b>' + esc(tx(c.o.t)) + '</b></li>'; }).join('') + '</ul>';
   }
@@ -1281,7 +1300,7 @@ footer a { color: var(--ink); }
       hybridTitle = level(res.flags) === 'head' ? v.h.head : v.h.title;
       html += panel(null, hybridHead(v) + splitHtml(v), { cls: 'hero' });
       var hw = whyFor(res, v.a, 2).concat(whyFor(res, v.b, 2));
-      if (hw.length) html += panel(sarc() ? 'Вас выдали эти ответы' : 'Почему такой результат', whyList(hw));
+      var whyItems = hw;
       html += panel('Как устроено совмещение', hybridSpec(v));
       html += panel('Профиль роли',
         '<div class="ticket"><span>Как правильно назвать вакансию</span><b>' + esc(hybridTitle) + '</b></div>' +
@@ -1293,7 +1312,7 @@ footer a { color: var(--ink); }
       html += panel(null, '<p class="eyebrow">Вам нужен · совпадение ' + top.pct + '%</p><h2 class="role"><mark>' + esc(R.name) + '</mark></h2>' +
         (sarc() ? '<p class="quip">' + esc(R.quip) + '</p>' : '') +
         '<p class="summary">' + esc(R.summary) + '</p>', { cls: 'hero' });
-      if (res.why.length) html += panel(sarc() ? 'Вас выдали эти ответы' : 'Почему такой результат', whyList(res.why));
+      var whyItems = res.why;
       html += panel('Профиль роли',
         '<div class="ticket"><span>Как правильно назвать вакансию</span><b>' + esc(R.titles[level(res.flags)]) + '</b></div>' +
         '<div class="spec">' +
@@ -1308,7 +1327,9 @@ footer a { color: var(--ink); }
         '<span class="track" aria-hidden="true"><span class="fill" style="width:' + Math.max(r.pct, 2) + '%"></span></span>' +
         '<span class="pct">' + r.pct + '%</span></div>';
     }).join('');
-    html += panel('Совпадение с ролями', '<div class="ranks">' + bars + '</div>', { sub: 'Пять ролей, на которые ваши задачи похожи больше всего.' });
+    var whyInner = (typeof whyItems !== 'undefined' && whyItems && whyItems.length ? whyList(whyItems) : '') +
+      '<p class="eyebrow fold-label">Совпадение с ролями</p><div class="ranks">' + bars + '</div>';
+    html += fold(sarc() ? 'Вас выдали эти ответы' : 'Почему такой результат', whyInner, { hint: 'Ответы, которые повлияли, и совпадение с другими ролями' });
 
     var adv = adviceFor(res, v.kind === 'hybrid');
     if (adv.length) html += panel('На что обратить внимание', '<ul class="advice">' +
@@ -1317,32 +1338,29 @@ footer a { color: var(--ink); }
     var vkey = tokenOf(v);
     if (v.kind !== 'nobody') {
       if (!vacDraft || vacDraft.key !== vkey) vacDraft = { key: vkey, text: v.kind === 'hybrid' ? buildHybridVacancy(res, v) : buildVacancy(res) };
-      html += panel(sarc() ? 'Черновик текста вакансии. Берите, чуть правьте и публикуйте, не пытайтесь улучшать' : 'Черновик вакансии',
+      html += fold(sarc() ? 'Черновик текста вакансии. Берите, чуть правьте и публикуйте, не пытайтесь улучшать' : 'Черновик вакансии',
         '<div class="doc-wrap"><textarea class="vac-text" id="vac-text" spellcheck="true" aria-label="Текст вакансии"></textarea></div>' +
         '<div class="row"><button type="button" class="btn primary" id="vac-copy">Скопировать вакансию</button>' +
         '<button type="button" class="btn" id="vac-reset">Вернуть исходный текст</button></div>' +
         '<span class="status" id="vac-status" role="status"></span>',
-        { pill: 'Можно править здесь', sub: sarc() ? 'Собран из ваших ответов. Заполните поля в квадратных скобках и, пожалуйста, пишите про «молодую динамично развивающуюся компанию» и «дружный коллектив профессионалов и единомышленников».' : 'Собран из ваших ответов. Заполните поля в квадратных скобках и поправьте текст под себя.' });
+        { hint: 'Готовый текст, который можно поправить и скопировать', sub: sarc() ? 'Собран из ваших ответов. Заполните поля в квадратных скобках и, пожалуйста, пишите про «молодую динамично развивающуюся компанию» и «дружный коллектив профессионалов и единомышленников».' : 'Собран из ваших ответов. Заполните поля в квадратных скобках и поправьте текст под себя.' });
     }
 
     var authorKey = v.kind === 'nobody' ? null : (v.a === 'pr' || (v.kind === 'hybrid' && v.b === 'pr')) ? 'pr' : v.a;
     html += authorHtml(authorKey);
     var shareUrl = PUBLIC_URL + '#' + vkey;
-    html += panel('Поделиться результатом',
+    html += panel('Поделиться и сохранить',
       '<div class="row"><input class="share-link" id="share-link" type="text" readonly value="' + esc(shareUrl) + '" aria-label="Ссылка на результат">' +
       '<button type="button" class="btn" id="share-copy">Скопировать ссылку</button></div>' +
       '<span class="status" id="share-status" role="status"></span>' +
-      '<div class="row"><button type="button" class="btn accent" id="card-make">Сделать карточку для соцсетей</button></div>' +
-      '<div id="card-holder" class="row"></div>',
-      { sub: sarc() ? 'Если вы рекрутер, HR или просто не понимаете, что происходит и что от вас хотят, то отправьте эту ссылку начальнику.' : 'Ссылка открывает этот результат с кнопкой «Пройти тест самому». Удобно отправить руководителю или в рабочий чат.' });
-
-    html += panel('Что дальше',
       '<div class="actions"><button type="button" class="btn primary" id="copy">' + esc(tx(COPY.copyRes)) + '</button>' +
+      '<button type="button" class="btn accent" id="card-make">Карточка для соцсетей</button>' +
       '<button type="button" class="btn" id="edit">' + esc(tx(COPY.edit)) + '</button>' +
       '<button type="button" class="btn" id="restart">' + esc(tx(COPY.restart)) + '</button></div>' +
       '<span class="status" id="copy-status" role="status"></span>' +
-      '<div id="copy-fallback-wrap" hidden><textarea class="copy-fallback" id="copy-fallback" readonly aria-label="Текст результата"></textarea></div>');
-
+      '<div id="card-holder" class="row"></div>' +
+      '<div id="copy-fallback-wrap" hidden><textarea class="copy-fallback" id="copy-fallback" readonly aria-label="Текст результата"></textarea></div>',
+      { sub: sarc() ? 'Если вы рекрутер, HR или просто не понимаете, что происходит и что от вас хотят, то отправьте эту ссылку начальнику.' : 'Ссылка открывает этот результат с кнопкой «Пройти тест самому». Удобно отправить руководителю или в рабочий чат.' });
 
     app.innerHTML = html;
 
